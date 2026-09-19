@@ -1,0 +1,230 @@
+html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planning PASS — Oihan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #38bdf8;
+      --accent: #818cf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; font-weight: 700; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    p.subtitle { color: var(--text-muted); font-size: 0.9rem; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    .stat-label { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; color: var(--primary); }
+
+    form { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; }
+    @media (max-width: 768px) { form { grid-template-columns: 1fr; } }
+    input, select, button { padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: var(--text); font-size: 0.95rem; }
+    input:focus, select:focus { outline: 2px solid var(--primary); }
+    button.btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #0f172a; font-weight: 600; border: none; cursor: pointer; }
+
+    .filters { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filters input { flex: 1; min-width: 200px; }
+
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-weight: 600; background: #0f172a; }
+
+    .j-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; margin-right: 4px; background: var(--border); color: var(--text-muted); cursor: pointer; }
+    .j-badge.done { background: rgba(34, 197, 94, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .badge-ue { background: rgba(56, 189, 248, 0.15); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem; }
+    .btn-delete { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="avatar">O</div>
+        <div>
+          <h1>Planning PASS — Oihan</h1>
+          <p class="subtitle">Organise tes révisions avec la méthode des J</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Cours enregistrés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-today" style="color: var(--warning);">0</div>
+        <div class="stat-label">À réviser aujourd'hui</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-completed" style="color: var(--success);">0</div>
+        <div class="stat-label">Révisions complétées</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">➕ Ajouter un nouveau cours</div>
+      <form id="course-form">
+        <input type="text" id="course-title" placeholder="Intitulé du cours (ex: Atomistique)" required>
+        <select id="course-ue" required>
+          <option value="UE1">UE1 — Chimie / Biochimie</option>
+          <option value="UE2">UE2 — Bio Cell / Histologie</option>
+          <option value="UE3">UE3 — Biophysique</option>
+          <option value="UE4">UE4 — Biostatistiques</option>
+          <option value="UE5">UE5 — Anatomie</option>
+          <option value="UE6">UE6 — Médicament</option>
+          <option value="UE7">UE7 — SHS / Santé</option>
+          <option value="Spé">Spécialités</option>
+        </select>
+        <input type="date" id="course-date" required>
+        <button type="submit" class="btn-primary">Ajouter J0</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="filters">
+        <input type="text" id="search-input" placeholder="🔍 Rechercher un cours..." oninput="renderTable()">
+        <select id="filter-ue" onchange="renderTable()">
+          <option value="ALL">Toutes les UE</option>
+          <option value="UE1">UE1</option>
+          <option value="UE2">UE2</option>
+          <option value="UE3">UE3</option>
+          <option value="UE4">UE4</option>
+          <option value="UE5">UE5</option>
+          <option value="UE6">UE6</option>
+          <option value="UE7">UE7</option>
+          <option value="Spé">Spécialités</option>
+        </select>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Matière</th>
+            <th>Intitulé du cours</th>
+            <th>Date J0</th>
+            <th>Suivi des Révisions (Méthode J)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="course-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let courses = JSON.parse(localStorage.getItem('pass_courses_oihan')) || [];
+    document.getElementById('course-date').valueAsDate = new Date();
+
+    document.getElementById('course-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('course-title').value;
+      const ue = document.getElementById('course-ue').value;
+      const j0Date = document.getElementById('course-date').value;
+
+      courses.push({
+        id: Date.now(),
+        title,
+        ue,
+        j0Date,
+        jDone: { J1: false, J3: false, J7: false, J14: false, J30: false }
+      });
+      saveData();
+      e.target.reset();
+      document.getElementById('course-date').valueAsDate = new Date();
+    });
+
+    function saveData() {
+      localStorage.setItem('pass_courses_oihan', JSON.stringify(courses));
+      renderTable();
+    }
+
+    function toggleJ(courseId, jKey) {
+      const course = courses.find(c => c.id === courseId);
+      if (course) {
+        course.jDone[jKey] = !course.jDone[jKey];
+        saveData();
+      }
+    }
+
+    function deleteCourse(id) {
+      if (confirm('Supprimer ce cours ?')) {
+        courses = courses.filter(c => c.id !== id);
+        saveData();
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('course-table-body');
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const filterUe = document.getElementById('filter-ue').value;
+      const todayStr = new Date().toISOString().split('T');
+
+      tbody.innerHTML = '';
+      let totalCount = 0, todayCount = 0, completedJCount = 0;
+
+      courses.forEach(c => {
+        if (filterUe !== 'ALL' && c.ue !== filterUe) return;
+        if (search && !c.title.toLowerCase().includes(search)) return;
+
+        totalCount++;
+        const jIntervals = [
+          { key: 'J1', days: 1 }, { key: 'J3', days: 3 },
+          { key: 'J7', days: 7 }, { key: 'J14', days: 14 }, { key: 'J30', days: 30 }
+        ];
+
+        let badgesHTML = '';
+        jIntervals.forEach(j => {
+          const d = new Date(c.j0Date);
+          d.setDate(d.getDate() + j.days);
+          const jDate = d.toISOString().split('T');
+          const isDone = c.jDone[j.key];
+
+          if (isDone) completedJCount++;
+          if (!isDone && jDate === todayStr) todayCount++;
+
+          badgesHTML += `<span class="j-badge ${isDone ? 'done' : ''}" onclick="toggleJ(${c.id}, '${j.key}')">${j.key}</span>`;
+        });
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="badge-ue">${c.ue}</span></td>
+          <td><strong>${c.title}</strong></td>
+          <td>${c.j0Date}</td>
+          <td>${badgesHTML}</td>
+          <td><button class="btn-delete" onclick="deleteCourse(${c.id})">🗑️</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('stat-total').innerText = totalCount;
+      document.getElementById('stat-today').innerText = todayCount;
+      document.getElementById('stat-completed').innerText = completedJCount;
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
